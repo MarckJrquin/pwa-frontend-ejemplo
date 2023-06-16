@@ -19,12 +19,13 @@ function Login() {
     setValues(prev => ({...prev, [event.target.name]: [event.target.value]}));
   }
 
+
   axios.defaults.withCredentials = true;
 
   useEffect(() => {
     axios.get('http://localhost:8081/home')
     .then(res => {
-      if(res.data.valid){
+      if(res.data.Status === 'success'){
         navigate('/home');
       } else {
         navigate('/');
@@ -33,20 +34,22 @@ function Login() {
     .catch(err => console.log(err))
   });
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     // setErrors(Validation(values));
-    
-    axios.post('http://localhost:8081/login', values)
-    .then(res => {
-        if(res.data.Login){
-          navigate('/home');
-        } else {
-          alert("No record existed")
-        }
-        console.log(res);
-    })
-    .catch(error => console.log(error))  
+    // if(errors.username === "" && errors.email === "" && errors.password === ""){
+      axios.post('http://localhost:8081/login', values)
+      .then(response => 
+        {
+          if(response.data.Status === 'success'){
+            console.log(response);
+            navigate('/home');
+          } else {
+            alert(response.data.Error);
+          }
+        })
+      .catch(error => console.log(error))
+    // }
   };
 
   return (

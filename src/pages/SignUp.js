@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React from "react";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Validation from "../utils/SignupValidation";
 
@@ -16,6 +16,18 @@ function SignUp() {
 
   // const [errors, setErrors] = useState({});
 
+  useEffect(() => {
+    axios.get('http://localhost:8081/home')
+    .then(res => {
+      if(res.data.Status === 'success'){
+        navigate('/home');
+      } else {
+        navigate('/');
+      }
+    })
+    .catch(err => console.log(err))
+  });
+
   const handleInput = (event) => {
     setValues(prev => ({...prev, [event.target.name]: [event.target.value]}));
   }
@@ -27,8 +39,12 @@ function SignUp() {
       axios.post('http://localhost:8081/signup', values)
       .then(response => 
         {
-          console.log(response);
-          navigate('/');
+          if(response.data.Status === 'success'){
+            console.log(response);
+            navigate('/');
+          } else {
+            alert("Error")
+          }
         })
       .catch(error => console.log(error))
     // }
